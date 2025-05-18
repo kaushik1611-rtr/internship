@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Choose Your Seats</h2>
+<h4>Movie: {{ showtime.movie.title }} | Time: {{ showtime.start_time }}</h4>
+
+<form method="post">
+    {% csrf_token %}
+    
+    <div class="seating-chart">
+        {% for row_label, seats in seat_rows.items %}
+            <div class="seat-row">
+                <span class="row-label">{{ row_label }}</span>
+                {% for seat in seats %}
+                    {% if seat.is_booked %}
+                        <button type="button" class="seat booked" disabled>{{ seat.seat_number }}</button>
+                    {% else %}
+                        <label class="seat available">
+                            <input type="checkbox" name="selected_seats" value="{{ seat.id }}">
+                            {{ seat.seat_number }}
+                        </label>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+
+    <button type="submit" class="submit-btn">Book Selected Seats</button>
+</form>
+
+<style>
+    .seating-chart {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin: 20px 0;
+    }
+
+    .seat-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .row-label {
+        width: 30px;
+        font-weight: bold;
+    }
+
+    .seat {
+        padding: 10px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        text-align: center;
+        min-width: 40px;
+    }
+
+    .seat input[type="checkbox"] {
+        display: none;
+    }
+
+    .seat.available {
+        background-color: #d4edda;
+        cursor: pointer;
+    }
+
+    .seat.available:hover {
+        background-color: #c3e6cb;
+    }
+
+    .seat.booked {
+        background-color: #f8d7da;
+        color: #888;
+        cursor: not-allowed;
+    }
+
+    .submit-btn {
+        margin-top: 20px;
+        padding: 10px 20px;
+        font-size: 16px;
+    }
+</style>
+{% endblock %}
+
